@@ -1,0 +1,2 @@
+# ExtendingDjangoAuth
+extending django authentication
