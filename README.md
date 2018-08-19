@@ -1,2 +1,3 @@
 # ExtendingDjangoAuth
-extending django authentication
+---
+extending django authentication is a  practical assesment.
