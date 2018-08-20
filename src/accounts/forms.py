@@ -1,51 +1,41 @@
 from django import forms
-from django.contrib.auth.models import User
+from django.forms import ModelForm
+from django.conf import settings
+from django.contrib.auth import get_user_model
 
-from django.contrib.auth.forms import UserCreationForm
+CustomUser = get_user_model()
 
-
-class RegistrationForm(UserCreationForm):
-    email = forms.EmailField(label = "Email", required = False)
+class RegistrationForm(forms.ModelForm):
+    password = forms.CharField(label='Password', widget=forms.PasswordInput)
+    password2 = forms.CharField(label='Repeat password', widget=forms.PasswordInput)
 
     class Meta:
-        model = User
-        fields = ("username", "password1", "password2")
+        model = CustomUser
+        fields = ('username','email',)
 
-        def clean_email(self):
-            email = self.cleaned_data['email']
-            if User.objects.filter(email=email).exists():
-                raise forms.ValidationError('That email is already taken')
-            return email
-
-   
-
-
-""" class RegistrationForm(forms.Form):
-    username = forms.CharField(label= "username", widget=forms.TextInput, required = True)
-    email = forms.EmailField(label = "Email", required = False)
-    password1 = forms.CharField(label='Password', widget=forms.PasswordInput, required = True)
-    password2 = forms.CharField(label='confirm password', widget=forms.PasswordInput, required = True)
-
-    
-    def clean_email(self):
-        email = self.cleaned_data['email']
-        if User.objects.filter(email=email).exists():
-            raise forms.ValidationError('That email is already taken')
-        return email
-
-    def clean_username(self):
-        username = self.cleaned_data['username']
-        if User.objects.filter(username=username).exists():
-            raise forms.ValidationError('Please use another username,that is already taken')
-        return username
-    
     def clean_password2(self):
         cd = self.cleaned_data
-        if cd['password1'] != cd['password2']:
+        if cd['password'] != cd['password2']:
             raise forms.ValidationError('Passwords don\'t match.')
         return cd['password2']
- """
-    
+
+
+class UserEditForm(forms.ModelForm):
+    class Meta:
+        model = CustomUser
+        fields = ('first_name', 'email')
+
+class LoginForm(forms.Form):
+    username = forms.CharField()
+    password = forms.CharField(widget=forms.PasswordInput)
+
+
+ 
+
+
+
+
+
 
 
 
