@@ -1,4 +1,7 @@
-from django.contrib.auth.models import User
+from django.conf import settings
+from django.contrib.auth import get_user_model 
+
+CustomUser = get_user_model()
 
 class EmailAuthBackend:
     # Email authentication

@@ -34,13 +34,14 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
-    'django.contrib.admin',
-    'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'accounts',
+    # overide default with the custom pages
+    'django.contrib.admin',
+    'django.contrib.auth',
 ]
 
 MIDDLEWARE = [
@@ -135,7 +136,7 @@ AUTHENTICATION_BACKENDS = (
     'accounts.authentication.EmailAuthBackend',
     )
 
-LOGIN_REDIRECT_URL = 'edit'
 
+LOGOUT_URL = '/'
 
 AUTH_USER_MODEL = 'accounts.CustomUser'

@@ -11,7 +11,7 @@ class RegistrationForm(forms.ModelForm):
 
     class Meta:
         model = CustomUser
-        fields = ('username','email',)
+        fields = ('username','email','first_name')
 
     def clean_password2(self):
         cd = self.cleaned_data
@@ -23,12 +23,11 @@ class RegistrationForm(forms.ModelForm):
 class UserEditForm(forms.ModelForm):
     class Meta:
         model = CustomUser
-        fields = ('first_name', 'email')
+        fields = ('email',)
 
 class LoginForm(forms.Form):
-    username = forms.CharField()
-    password = forms.CharField(widget=forms.PasswordInput)
-
+    username = forms.CharField(label = 'username')
+    password = forms.CharField(label='Password', widget=forms.PasswordInput)
 
  
 
