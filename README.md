@@ -1,7 +1,7 @@
 # ExtendingDjangoAuth
 ---
 extending django authentication is a  practical assesment.
-Extended django inbuilt Authentication by abstracicting **User**
+Extended django inbuilt Authentication by abstracting **User**
 
 ### How it works
 1. Register.Username is required but email is optional.
