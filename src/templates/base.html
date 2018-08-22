@@ -11,14 +11,14 @@
 
 <body>
     <header>
-        <nav></nav>
+        {% include 'nav.html' %}
     </header>
     <main>
         {% block content %}{% endblock %}
     </main>
-    <footer></footer>
-
-
+    <footer>
+        copyright © 2018
+    </footer>
 </body>
 
 </html>

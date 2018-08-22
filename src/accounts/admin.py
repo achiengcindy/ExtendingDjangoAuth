@@ -1,6 +1,9 @@
+
 from django.contrib import admin
+from .models import Profile
 
-from django.contrib.auth.admin import UserAdmin
-from .models import CustomUser
+class ProfileAdmin(admin.ModelAdmin):
+    list_display =('user', 'is_email_confirmed')
 
-admin.site.register(CustomUser, UserAdmin)
+
+admin.site.register(Profile, ProfileAdmin)

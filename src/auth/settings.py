@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     # overide default with the custom pages
     'django.contrib.admin',
     'django.contrib.auth',
+   
 ]
 
 MIDDLEWARE = [
@@ -138,5 +139,3 @@ AUTHENTICATION_BACKENDS = (
 
 
 LOGOUT_URL = '/'
-
-AUTH_USER_MODEL = 'accounts.CustomUser'

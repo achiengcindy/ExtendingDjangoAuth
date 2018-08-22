@@ -1,0 +1,17 @@
+<nav>
+    <ul>
+        {% url 'home' as Home %} 
+        {% url 'register' as Register %} 
+        {% url 'edit' as Edit %} 
+        {% url 'login' as Login %}
+
+        <li>
+            <a class="" {% if request.path == 'home' %} class="active" {% endif %} href="{% url 'accounts:home' %}">Home</a>
+        </li>
+        <li>
+            <a class="" {% if request.path == 'register' %} class="active" {% endif %} href="{% url 'accounts:register' %}">Register</a></li>
+
+        <li>
+            <a class="" {% if request.path == 'login' %} class="active" {% endif %} href="{% url 'accounts:login' %}">Login</a></li>
+    </ul>
+</nav>

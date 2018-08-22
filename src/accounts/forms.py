@@ -1,16 +1,13 @@
 from django import forms
 from django.forms import ModelForm
-from django.conf import settings
-from django.contrib.auth import get_user_model
-
-CustomUser = get_user_model()
+from django.contrib.auth.models import User
 
 class RegistrationForm(forms.ModelForm):
     password = forms.CharField(label='Password', widget=forms.PasswordInput)
     password2 = forms.CharField(label='Repeat password', widget=forms.PasswordInput)
 
     class Meta:
-        model = CustomUser
+        model = User
         fields = ('username','email','first_name')
 
     def clean_password2(self):
@@ -22,7 +19,7 @@ class RegistrationForm(forms.ModelForm):
 
 class UserEditForm(forms.ModelForm):
     class Meta:
-        model = CustomUser
+        model = User
         fields = ('email',)
 
 class LoginForm(forms.Form):
@@ -30,7 +27,6 @@ class LoginForm(forms.Form):
     password = forms.CharField(label='Password', widget=forms.PasswordInput)
 
  
-
 
 
 

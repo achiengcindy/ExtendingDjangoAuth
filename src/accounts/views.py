@@ -1,5 +1,4 @@
-from django.conf import settings
-from django.contrib.auth import get_user_model,login, authenticate
+from django.contrib.auth import login, authenticate
 from django.contrib.sites.shortcuts import get_current_site
 from django.shortcuts import render , redirect
 from django.http import HttpResponse
@@ -14,7 +13,11 @@ from django.template.loader import render_to_string
 from .forms import  RegistrationForm,UserEditForm , LoginForm
 from .tokens import email_activation_token
 
-CustomUser = get_user_model()
+from .models import Profile
+from django.contrib.auth.models import User
+
+def home(request):
+    return render(request, 'accounts/home.html', {})
 
 def register(request):
     if request.method == 'POST':
@@ -23,9 +26,8 @@ def register(request):
             new_user = user_form.save(commit=False)
             #hash password
             new_user.set_password(user_form.cleaned_data['password'])
-            new_user.is_active = False
             new_user.save()
-            if new_user.email:
+            if new_user.is_email_confirmed:
                 #send one time activation email
                 current_site = get_current_site(request)
                 subject = 'Activate Account'
@@ -42,7 +44,9 @@ def register(request):
                 return redirect('account_activation_sent')
             
             else:
-                return redirect('user_login')
+                return redirect('accounts:login')
+
+
     else:
         user_form = RegistrationForm()
     return render(request, 'accounts/register.html',{'user_form': user_form})
@@ -54,12 +58,11 @@ def user_login(request):
             cd = login_form.cleaned_data
             user = authenticate(username=cd['username'], password=cd['password'])
             if user is not None:
-                if user.is_active:
                     login(request, user)
-                    if user.is_email_confirmed:
+                    if user.profile.is_email_confirmed:
                         return redirect('/')
                     else:
-                        return redirect('edit')
+                        return redirect('accounts:edit')
     else:
         login_form = LoginForm()
     return render(request,'accounts/login.html' ,{'login_form': login_form})    
@@ -67,6 +70,20 @@ def user_login(request):
 
 def account_activation_sent(request):
     return render(request, 'accounts/account_activation_sent.html')
+
+
+def activate(request, uidb64, token, backend='accounts.authentication.EmailAuthBackend'):
+    try:
+        uid = force_text(urlsafe_base64_decode(uidb64))
+        user = User.objects.get(pk=uid)
+    except(TypeError, ValueError, OverflowError, User.DoesNotExist):
+        user = None
+    if user is not None and email_activation_token.check_token(user, token):
+        user.is_active = True
+        user.is_email_confirmed = True
+        user.save()
+        login(request, user, 'accounts.authentication.EmailAuthBackend')
+        return redirect('/')
 
 
 @login_required
@@ -99,19 +116,6 @@ def edit(request):
 
 
 
-
-def activate(request, uidb64, token, backend='accounts.authentication.EmailAuthBackend'):
-    try:
-        uid = force_text(urlsafe_base64_decode(uidb64))
-        user = CustomUser.objects.get(pk=uid)
-    except(TypeError, ValueError, OverflowError, CustomUser.DoesNotExist):
-        user = None
-    if user is not None and email_activation_token.check_token(user, token):
-        user.is_active = True
-        user.is_email_confirmed = True
-        user.save()
-        login(request, user, 'accounts.authentication.EmailAuthBackend')
-        return redirect('/')
 
 
 
