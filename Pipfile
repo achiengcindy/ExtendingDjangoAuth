@@ -8,6 +8,7 @@ django = "*"
 python-decouple = "*"
 whitenoise = "*"
 gunicorn = "*"
+django-two-factor-auth = "*"
 
 [requires]
 python_version = "3.5"

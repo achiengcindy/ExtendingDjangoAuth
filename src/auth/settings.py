@@ -42,6 +42,11 @@ INSTALLED_APPS = [
     # overide default with the custom pages
     'django.contrib.admin',
     'django.contrib.auth',
+
+    'django_otp',
+    'django_otp.plugins.otp_static',
+    'django_otp.plugins.otp_totp',
+    'two_factor',
    
 ]
 
@@ -51,6 +56,8 @@ MIDDLEWARE = [
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
+    #must come after authenticatio
+    'django_otp.middleware.OTPMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
@@ -139,3 +146,10 @@ AUTHENTICATION_BACKENDS = (
 
 
 LOGOUT_URL = '/'
+
+
+
+LOGIN_URL = 'two_factor:login'
+
+# this one is optional
+LOGIN_REDIRECT_URL = 'accounts:edit'

@@ -10,7 +10,7 @@ from django.core.mail import EmailMessage
 from django.template.loader import render_to_string
 
 
-from .forms import  RegistrationForm,UserEditForm , LoginForm
+from .forms import  RegistrationForm,UserProfileForm 
 from .tokens import email_activation_token
 
 from .models import Profile
@@ -19,15 +19,20 @@ from django.contrib.auth.models import User
 def home(request):
     return render(request, 'accounts/home.html', {})
 
+
+
 def register(request):
     if request.method == 'POST':
         user_form = RegistrationForm(request.POST)
         if user_form.is_valid():
             new_user = user_form.save(commit=False)
-            #hash password
-            new_user.set_password(user_form.cleaned_data['password'])
+             #hash password
+            new_user.set_password(user_form.cleaned_data['password1'])
             new_user.save()
-            if new_user.is_email_confirmed:
+            # Create the user profile
+            profile = Profile.objects.create(user=new_user)
+
+            if new_user.profile.is_email_confirmed:
                 #send one time activation email
                 current_site = get_current_site(request)
                 subject = 'Activate Account'
@@ -39,33 +44,17 @@ def register(request):
                     'token':email_activation_token.make_token( new_user),
                 })
                  # https://stackoverflow.com/questions/40655802/how-to-implement-email-user-method-in-custom-user-model
-                email = EmailMessage(subject, message,sender, [new_user.email])
-                email.send()
+                NEW_user.email_user(subject, message)
                 return redirect('account_activation_sent')
             
             else:
-                return redirect('accounts:login')
+                return redirect('login')
 
 
     else:
         user_form = RegistrationForm()
     return render(request, 'accounts/register.html',{'user_form': user_form})
-
-def user_login(request):
-    if request.method == 'POST':
-        login_form = LoginForm(request.POST)
-        if login_form.is_valid():
-            cd = login_form.cleaned_data
-            user = authenticate(username=cd['username'], password=cd['password'])
-            if user is not None:
-                    login(request, user)
-                    if user.profile.is_email_confirmed:
-                        return redirect('/')
-                    else:
-                        return redirect('accounts:edit')
-    else:
-        login_form = LoginForm()
-    return render(request,'accounts/login.html' ,{'login_form': login_form})    
+  
 
 
 def account_activation_sent(request):
@@ -83,13 +72,13 @@ def activate(request, uidb64, token, backend='accounts.authentication.EmailAuthB
         user.is_email_confirmed = True
         user.save()
         login(request, user, 'accounts.authentication.EmailAuthBackend')
-        return redirect('/')
+        return redirect('qr')
 
 
 @login_required
 def edit(request):
     if request.method == 'POST':
-        edit_form = UserEditForm(instance=request.user,data=request.POST)
+        edit_form = ProfileEditForm(instance=request.user.profile ,data=request.POST)
         if edit_form.is_valid():
             request.user.is_active = False
             edit_form.save()
@@ -111,9 +100,8 @@ def edit(request):
         else:
             print(request, 'Error updating your profile')
     else:
-        edit_form = UserEditForm(instance=request.user)
+        edit_form = ProfileEditForm(instance=request.user)
     return render(request,'accounts/edit.html',{'edit_form': edit_form})
-
 
 
 

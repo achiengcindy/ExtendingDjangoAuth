@@ -1,8 +1,9 @@
 {% block content %}
 <h2>Please login</h2>
 {% if form.errors %}Your username and password didn't match. Please try again.{% endif %}
-<form action="{% url 'accounts:login' %}" method="post">
-    {% csrf_token %} {{ login_form.as_p }}
+<form action="." method="post">
+    {% csrf_token %} {{ form.as_p }}
     <p><input type="submit" value="Log-in"></p>
+    <input type="hidden" name="next" value="{{next}}" />
 </form>
 {% endblock %}
